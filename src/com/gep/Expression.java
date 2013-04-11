@@ -24,25 +24,59 @@ public class Expression {
    private double[] GeneData;  //填充数据 的
    
    private int nValidLen;
+   private int GeneLength;
+   private int GeneCount;
   
 	
    
    public Expression(){
 	   Fun=new FunctionSet();
+	   this.GeneLength=GepProcess.GeneLength;
+	   this.GeneCount=GepProcess.GeneCount;
 	   
    }
 	/**
 	 * 获取基因表达的计算值
 	**/
-	public void GetValue(Individual Indiv ,double[] Data) {
+	public double GetValue(Individual Indiv ,double[] Data) {
 		GeneData=new double[Indiv.Chrom.size()];
 	   this.Data=Data;
-		
+	    
+	   int i;
+	   double res=0;
+	   //计算每个基因的值  连接函数使用 +  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	   for(i=0;i<this.GeneCount;++i){
+		    List<String> listGene=Indiv.Chrom.subList(i*GeneLength, i*GeneLength+GeneLength);
+		    res+=GetGeneValue(listGene);                              
+	   }
+	   return res;		
 	
 	}
 	
-	private void GetGeneValue() {
-	
+	/**
+	 *  计算每个基因的值
+	 * @param Gene
+	 */
+	private double GetGeneValue(List<String> Gene) {
+		  this.GetValidLength(Gene);
+		  this.FillData(Gene);
+		  int nButton=this.nValidLen;
+		  int nParamCount;
+		  int j,k;
+		  int i=nButton-1;
+		  for(;i>=0;--i){ //从后向前计算
+			    nParamCount=Fun.GetParamCount(Gene.get(i));
+			    if(nParamCount>0){
+			    	   double[] dData=new double[nParamCount];
+			    	   k=0;
+			    	   for( j=nButton-nParamCount;j<nButton;++j){
+			    		   dData[k++]=this.GeneData[j];
+			    	   }
+			    	   this.GeneData[i]=Fun.GetResult(Gene.get(i), dData);
+			    	   nButton-=nParamCount;
+			    }
+		  }
+	   return GeneData[0];
 	}
 	
 	/**
@@ -66,7 +100,7 @@ public class Expression {
 	 * @param Gene
 	 */
 	private void FillData(List<String> Gene) {
-	      for(int i=0;i<Gene.size();++i){
+	      for(int i=0;i<this.nValidLen;++i){
 	    	    int nParam=Fun.GetParamCount(Gene.get(i));
 	    	    if(0==nParam){
 	    	    	  String sNum=Gene.get(i);

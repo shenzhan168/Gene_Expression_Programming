@@ -29,7 +29,7 @@ public class GepProcess {
 	public int MaxGeneration; //
 	public int PopulationSize;
 	public int HeadLength;
-	public int GeneCount;
+	public static int GeneCount;
 	public static int GeneLength;
 	public int ChromosomeLength;
 	public double MutationRate;
@@ -45,15 +45,24 @@ public class GepProcess {
 	public double Error;
 	public double SuccessRate;
 	
-	public int FeatureNum;
-	
+	public int FeatureNum;  //特征数量
 	public String[] sFullSet;  //函数集合+特征集合
 	public String[]  sFeatureSet; //特征集合
+	
+	public double[][] TrainData;  //训练数据
+	public double[][] TestData;    //测试数据
+	
+	public double[] Fitness;
+	
+	public Individual BestIndividual;
+	public int BestIndivNum;
 	
 	/**
 	 * 群体初始化
 	**/
 	public void InitialPopulation() {
+		//初始化
+		  Fitness=new double[this.PopulationSize];
 		
 		//产生必要的字符集合
 		
@@ -65,7 +74,7 @@ public class GepProcess {
 		
 		int nTail=this.HeadLength*(Fun.MaxParamCount-1)+1; //尾部长度
 		this.GeneLength=this.HeadLength+nTail;  //计算基因长度
-		this.ChromosomeLength=this.GeneCount*this.GeneLength; //染色体长度
+		this.ChromosomeLength=GepProcess.GeneCount*GepProcess.GeneLength; //染色体长度
 		
 		String[] sFunSet=(String[]) Fun.sFunction.toArray(); //函数集合
 	    sFullSet=new String[sFunSet.length+sFeatureSet.length];  //函数集合 +特征集合
@@ -109,7 +118,39 @@ public class GepProcess {
 	 * 每一代的评估函数
 	**/
 	public void EvalutePopulaton() {
-	
+	    
+		   int nRow=this.TestData.length;
+		   int nCol=this.TestData[0].length;
+		   Expression Exp=new Expression();
+		   int i,j,k;
+		   
+		   for(i=0;i<this.PopulationSize;++i){
+			   int tp=0,fp=0,tn=0,fn=0;
+			    for(j=0;j<nRow;++j){
+			    	      double dValue=Exp.GetValue(this.Pop.Get(i), this.TestData[j]);
+			    	      //二分类 0 类
+			    	      if(TestData[j][nCol]==0){
+			    	    	    if(dValue<0){
+			    	    	    	tp++;
+			    	    	    }
+			    	    	    else{
+			    	    	    	fp++;
+			    	    	    }  	  
+			    	      }else if(TestData[j][nCol]==1){
+			    	    	   if(dValue>=0){
+			    	    		   tn++;
+			    	    	   }
+			    	    	   else{
+			    	    		   fn++;
+			    	    	   }
+			    	      } 
+			    	      
+			    }
+			    Pop.Get(i).Fitness=(tp+tn)/nRow;
+			    this.Fitness[i]=(tp+tn)/nRow;
+		   }
+		  
+		
 	}
 	
 	/**
@@ -123,7 +164,66 @@ public class GepProcess {
 	 * 选择在群体中进行选择
 	**/
 	public void Select() {
+		Population NewPop=new Population();
+		FindBestIndividual();
+		NewPop.AddIndivdual(this.BestIndividual); //精英策略
+		
+		double dTotal=0;
+		for(int i=0;i<this.PopulationSize;++i){
+			dTotal+=this.Fitness[i];
+		}
+		
+		double[] dRate=new double[this.PopulationSize];
+		
+		if(dTotal==0){
+			for(int i=0;i<this.PopulationSize;++i){
+				dRate[i]=1/this.PopulationSize;
+			}
+		}else{
+		    for(int i=0;i<this.PopulationSize;++i){
+			    dRate[i]=this.Fitness[i]/dTotal;
+     		}
+		}
+		
+		//轮赌盘
+		double[] dWheel=new double[this.PopulationSize];
+		for(int i=0;i<this.PopulationSize;++i){
+			 if(0==i){
+				 dWheel[i]=this.Fitness[i];
+			 }
+			 else{
+		     	 dWheel[i]=dWheel[i-1]+this.Fitness[i];
+			 }		
+		}
+		
+		//选择
+		Random random=new Random();
+		for(int i=1;i<this.PopulationSize;++i){
+			  double d=random.nextDouble();
+			  int j=0;
+			  while(d>dWheel[j++]);
+			  NewPop.AddIndivdual(this.Pop.Get(j));
+		}
+		
+		this.Pop=NewPop;  
 	
+	}
+	
+	/**
+	 * 查找最优个体
+	 */
+	public void FindBestIndividual(){
+		  int  nMax=0;
+		  double dMaxFitness=this.Fitness[0];
+		  int i;
+		  for(i=1;i<this.Fitness.length;++i){
+			    if(this.Fitness[i]>dMaxFitness){
+			    	dMaxFitness=this.Fitness[i];
+			    	nMax=i;
+			    }
+		  }
+		  this.BestIndivNum=nMax;
+		  this.BestIndividual=this.Pop.Get(nMax);
 	}
 	
 	/**
