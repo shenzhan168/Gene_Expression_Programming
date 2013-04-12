@@ -1,5 +1,6 @@
 package com.gep;
 
+import java.util.LinkedList;
 import java.util.List;
 
 //
@@ -22,7 +23,7 @@ public class Population {
 	 * 初始化种群
 	 */
 	public Population() {
-	
+	     PopulationSet=new LinkedList<Individual>();
 	}
 	
 	/**
