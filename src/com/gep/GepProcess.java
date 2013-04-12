@@ -9,8 +9,6 @@ import java.util.*;
 //  @ File Name : GepProcess.java
 //  @ Date : 2013/4/5
 //  @ Author : @shenzhan
-//
-//
 
 /**
  * gep的主要过程
@@ -110,7 +108,7 @@ public class GepProcess {
 				// 基因尾部
 				for (; j < this.GeneLength; ++j) {
 					nIndex = random.nextInt(sFeatureSet.length);
-					sGene[j] = sFeatureSet[j];
+					sGene[j] = sFeatureSet[nIndex];
 				}
 
 				Indiv.AddGene(sGene); // 添加基因
@@ -177,11 +175,12 @@ public class GepProcess {
 			dTotal += this.Fitness[i];
 		}
 
+		//每个个体的概率
 		double[] dRate = new double[this.PopulationSize];
 
 		if (dTotal == 0) {
 			for (int i = 0; i < this.PopulationSize; ++i) {
-				dRate[i] = 1 / this.PopulationSize;
+				dRate[i] = 1 /(double) this.PopulationSize;
 			}
 		} else {
 			for (int i = 0; i < this.PopulationSize; ++i) {
@@ -204,8 +203,13 @@ public class GepProcess {
 		for (int i = 1; i < this.PopulationSize; ++i) {
 			double d = random.nextDouble();
 			int j = 0;
-			while (d > dWheel[j]){
-				++j;
+			for(j=0;j<this.PopulationSize;++j){
+				if(d<dWheel[j]){
+					break;
+				}
+			}
+			if(j>=this.PopulationSize){
+				j=this.PopulationSize-1;
 			}
 			NewPop.AddIndivdual(this.Pop.Get(j));
 		}
@@ -533,5 +537,17 @@ public class GepProcess {
 		return (tp+tn)/nRow;
 
 	}
+	
+	//-----------------------------------------------------------------------------------
+	public double AverageFitness(){
+		double dRes=0;
+		for(int i=0;i<this.PopulationSize;++i){
+			dRes+=this.Pop.Get(i).Fitness;
+		}
+		dRes=dRes/this.PopulationSize;
+		return dRes;
+	}
+	
+	
 
 }
