@@ -260,6 +260,8 @@ public class GepProcess {
 		}
 	}
 
+	
+	
 	/**
 	 * IS 插串
 	 */
@@ -280,7 +282,7 @@ public class GepProcess {
 
 				// 随机源位置
 				int nSouPos = random.nextInt(this.GeneLength);
-				if (nSouPos + nLength >= this.GeneLength) {
+				if (nSouPos + nLength > this.GeneLength) {
 					nSouPos = this.GeneLength - nLength;
 				}
 				nSouPos += nStart;
@@ -289,14 +291,14 @@ public class GepProcess {
 				int nTarPos;
 				do {
 					nTarPos = random.nextInt(this.HeadLength);
-				} while (0 != nTarPos);
+				} while (0 == nTarPos);
 				nTarPos += nStart;
 
 				// 基因IS复制
 				List<String> listTemp = Indiv.Chrom.subList(nSouPos, nSouPos
 						+ nLength);
-				Indiv.Chrom.addAll(0, listTemp);
-				for (int j = this.HeadLength + nLength - 1; j >= this.HeadLength; --j) {
+				Indiv.Chrom.addAll(nTarPos, listTemp);
+				for (int j =0; j<nLength; ++j) {
 					Indiv.Chrom.remove(this.HeadLength);
 				}
 
@@ -313,40 +315,39 @@ public class GepProcess {
 		double dRate;
 		for (int i = 0; i < this.PopulationSize; ++i) {
 			dRate = random.nextDouble();
-			if (dRate < this.ISRate) {
+			if (dRate < this.RISRate) {
 				int nIndivNO = random.nextInt(this.PopulationSize); // 随机个体
 				Individual Indiv = this.Pop.Get(nIndivNO);
 
 				int nGeneNO = random.nextInt(this.GeneCount); // 随机基因
 				int nStart = nGeneNO * this.GeneLength; // 开始位置
 
-				int nSelLen = this.ISElemLength.length;
-				int nLength = this.ISElemLength[random.nextInt(nSelLen)]; // 随机长度
+				int nSelLen = this.RISElemLength.length;
+				int nLength = this.RISElemLength[random.nextInt(nSelLen)]; // 随机长度
 
 				// 随机源位置
 				int nHeadPos;
 				do {
 					nHeadPos = random.nextInt(this.HeadLength);
 				} while (nHeadPos == 0);
-				while (nHeadPos < this.GeneLength
-						&& !Fun.IsFunction(Indiv.Get(nHeadPos))) {
+				nHeadPos+=nStart;
+				while (nHeadPos <( this.HeadLength+nStart)  &&  !Fun.IsFunction(Indiv.Get(nHeadPos))) {
 					++nHeadPos;
 				}
-				if (nHeadPos == this.GeneLength) { // 找不到函数符号
+				if (nHeadPos >=(nStart+ this.HeadLength) ) { // 找不到函数符号
 					continue;
 				}
 				// 判断长度
-				if (this.GeneLength - nHeadPos < nLength) {
-					nLength = this.GeneLength - nHeadPos;
+				if (this.HeadLength - (nHeadPos-nStart) < nLength) {
+					nLength = this.HeadLength -( nHeadPos-nStart);
 				}
 
 				// 基因插窜
-				List<String> listTemp = Indiv.Chrom.subList(nHeadPos, nHeadPos
-						+ nLength);
-				Indiv.Chrom.addAll(0, listTemp);
+				List<String> listTemp = Indiv.Chrom.subList(nHeadPos, nHeadPos+ nLength);
+				Indiv.Chrom.addAll(nStart, listTemp);
 				
 				for (int j=0;j<nLength;++j) {
-					Indiv.Chrom.remove(this.HeadLength);
+					Indiv.Chrom.remove(nStart+this.HeadLength);
 				}
 				
 			}
@@ -371,7 +372,7 @@ public class GepProcess {
 				int nGeneNO; // 随机基因
 				do {
 					nGeneNO = random.nextInt(this.GeneCount);
-				} while (nGeneNO != 0);
+				} while (0==nGeneNO );
 
 				// 基因插串
 				int nStart = nGeneNO * this.GeneLength;
@@ -437,7 +438,7 @@ public class GepProcess {
 		double dRate;
 		for (i = 0; i < this.PopulationSize; ++i) {
 			dRate = random.nextDouble();
-			if (dRate < this.RISRate) {
+			if (dRate < this.TwoPRecomRate) {
 
 				nFather = random.nextInt(this.PopulationSize);// 随机选取交叉个体
 				nMother = random.nextInt(this.PopulationSize);
@@ -450,7 +451,7 @@ public class GepProcess {
 				if (nPosPre > nPosLast) {
 					int nTemp = nPosLast;
 					nPosLast = nPosPre;
-					nPosPre = nPosLast;
+					nPosPre = nTemp;
 				}
 
 				// 基因交换
@@ -480,7 +481,7 @@ public class GepProcess {
 
 			dRate = random.nextDouble();
 
-			if (dRate < this.GeneTransRate) {
+			if (dRate < this.GeneRecomRate) {
 
 				nFather = random.nextInt(this.PopulationSize);// 随机选取交叉个体
 				nMother = random.nextInt(this.PopulationSize);
@@ -520,13 +521,13 @@ public class GepProcess {
 		for (j = 0; j < nRow; ++j) {
 			double dValue = Exp.GetValue(this.BestIndividual, this.TestData[j]);
 			// 二分类 0 类
-			if (TestData[j][nCol] == 0) {
+			if (TestData[j][nCol-1] == 0) {
 				if (dValue < 0) {
 					tp++;
 				} else {
 					fp++;
 				}
-			} else if (TestData[j][nCol] == 1) {
+			} else if (TestData[j][nCol-1] == 1) {
 				if (dValue >= 0) {
 					tn++;
 				} else {
@@ -534,7 +535,7 @@ public class GepProcess {
 				}
 			}
 		}
-		return (tp+tn)/nRow;
+		return (tp+tn)/(double)nRow;
 
 	}
 	
