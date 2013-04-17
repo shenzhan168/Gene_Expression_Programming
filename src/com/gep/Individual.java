@@ -19,24 +19,25 @@ import java.util.List;
 
 /**
  * 染色体Chromosome
+ * 
 **/
-public class Individual {
+public class Individual implements Cloneable{
 	/**
 	 * 基因的适应值
 	**/
 	public double Fitness;
 	
 	public double Value;
-	
-	
-	
 	/**
 	 * 染色体 字符串
 	**/
 	public List<String> Chrom;
 	
+	
+	
 	public Individual(){
 		this.Chrom=new LinkedList<String>();
+	
 	}
 	
 	/**
@@ -80,4 +81,26 @@ public class Individual {
 	    	   this.Chrom.add(Indiv.Chrom.get(i));
 	     }
 	}
+	
+	/**
+	 * 个体克隆
+	 */
+	public Object clone(){
+		Individual  Indiv = null;
+        try{
+           Indiv = (Individual)super.clone();
+        }catch(CloneNotSupportedException e){
+            e.printStackTrace();
+        }
+        
+        Indiv.Chrom=new LinkedList<String>();
+        for(int i=0;i<this.Chrom.size();++i){
+            String sCode=new String(this.Chrom.get(i));
+            Indiv.Chrom.add(sCode);
+        }
+        return Indiv;
+    }
+
+	
+	
 }

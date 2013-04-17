@@ -211,7 +211,8 @@ public class GepProcess {
 			if(j>=this.PopulationSize){
 				j=this.PopulationSize-1;
 			}
-			NewPop.AddIndivdual(this.Pop.Get(j));
+			Individual SelectIndiv=(Individual)this.Pop.Get(j).clone();   //复制个体
+			NewPop.AddIndivdual(SelectIndiv);                                          //加入到新的种群中
 		}
 
 		this.Pop = NewPop;
@@ -299,7 +300,7 @@ public class GepProcess {
 						+ nLength);
 				Indiv.Chrom.addAll(nTarPos, listTemp);
 				for (int j =0; j<nLength; ++j) {
-					Indiv.Chrom.remove(this.HeadLength);
+					Indiv.Chrom.remove(nStart+this.HeadLength);
 				}
 
 			}
@@ -521,13 +522,13 @@ public class GepProcess {
 		for (j = 0; j < nRow; ++j) {
 			double dValue = Exp.GetValue(this.BestIndividual, this.TestData[j]);
 			// 二分类 0 类
-			if (TestData[j][nCol-1] == 0) {
+			if (TestData[j][nCol-1] == 1) {
 				if (dValue < 0) {
 					tp++;
 				} else {
 					fp++;
 				}
-			} else if (TestData[j][nCol-1] == 1) {
+			} else if (TestData[j][nCol-1] == 2) {
 				if (dValue >= 0) {
 					tn++;
 				} else {
