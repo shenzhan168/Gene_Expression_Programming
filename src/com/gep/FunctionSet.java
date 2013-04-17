@@ -70,37 +70,37 @@ public class FunctionSet {
 	 */
 	public double GetResult(String Operator, double[] Data) {
 		
-		  if("+"==Operator){
+		  if(Operator.equals("+")){
 			    return Data[0]+Data[1];
 		  }
-		  else if("-"==Operator){
+		  else if(Operator.equals("-")){
 			    return Data[0]-Data[1];
 		  }
-		  else if("*"==Operator){
+		  else if(Operator.equals("*")){
 			    return Data[0]*Data[1];
 		  }
-		  else if("/"==Operator){
+		  else if(Operator.equals("/")){
 			    return Data[0]/Data[1];  //--------------------------------
 		  }
-		  else if("sin"==Operator){
+		  else if(Operator.equals("sin")){
 			    return Math.sin(Data[0]);
 		  }
-		  else if("cos"==Operator){
+		  else if(Operator.equals("cos")){
 			     return Math.cos(Data[0]);
 		  }
-		  else if("sqrt"==Operator){
+		  else if(Operator.equals("sqrt")){
 			  return Math.sqrt(Data[0]);
 		  }
-		  else if("tan"==Operator){
+		  else if(Operator.equals("tan")){
 			  return Math.tan(Data[0]);
 		  }
-		  else if("pow2"==Operator){
+		  else if(Operator.equals("pow2")){
 			    return Math.pow(Data[0], 2);
 		  }
-		  else if("log"==Operator){
+		  else if(Operator.equals("log")){
 			    return Math.log(Data[0]);
 		  }
-		  else if("abs"==Operator){
+		  else if(Operator.equals("abs")){
 			  return Math.abs(Data[0]);
 		  }
 		  

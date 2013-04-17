@@ -98,6 +98,10 @@ public class Individual implements Cloneable{
             String sCode=new String(this.Chrom.get(i));
             Indiv.Chrom.add(sCode);
         }
+        
+        Indiv.Fitness=this.Fitness;
+        Indiv.Value=this.Value;
+        
         return Indiv;
     }
 
