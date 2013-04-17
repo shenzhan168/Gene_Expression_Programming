@@ -21,6 +21,11 @@ public class GepProcess {
 	public Population Pop; // 种群
 	public FunctionSet Fun; // 函数集
 	public List<String> Feature;
+	
+	/**
+	 * 适应值函数
+	 */
+	public String FitnessFunType; 
 
 	public int MaxGeneration; //
 	public int PopulationSize;
@@ -123,43 +128,24 @@ public class GepProcess {
 	 **/
 	public void EvalutePopulaton() {
 
-		int nRow = this.TrainData.length;
-		int nCol = this.TrainData[0].length;
-		Expression Exp = new Expression();
-		int i, j, k;
-
-		for (i = 0; i < this.PopulationSize; ++i) {
-			int tp = 0, fp = 0, tn = 0, fn = 0;
-			for (j = 0; j < nRow; ++j) {
-				double dValue = Exp.GetValue(this.Pop.Get(i), this.TrainData[j]);
-				Pop.Get(i).Value=dValue;
-				// 二分类 0 类
-				if (TrainData[j][nCol-1] == 1) {
-					if (dValue < 0) {
-						tp++;
-					} else {
-						fp++;
-					}
-				} else if (TrainData[j][nCol-1] == 2) {
-					if (dValue >= 0) {
-						tn++;
-					} else {
-						fn++;
-					}
-				}
-
-			}
-			Pop.Get(i).Fitness = (double)(tp + tn) / (double)nRow;
-			this.Fitness[i] = (double)(tp + tn) / (double)nRow;
-		}
-
+		     //产生适应值计算 对象 
+             FitnessFunction FitFun=FitnessFunFactory.GetFitnessFun(this.FitnessFunType);
+              //计算适应值
+             if(null==FitFun){
+            	 System.out.println("参数 适应度函数不正确");
+            	 System.exit(1);
+             }
+             FitFun.GetFitness(this.Pop, this.TrainData, this.Fitness);
+             
 	}
 
 	/**
 	 * 判断gep是否要结束
 	 **/
-	public void IsTerminate() {
-
+	public boolean IsTerminate() {
+                
+		     return false;
+		
 	}
 
 	/**
@@ -515,9 +501,8 @@ public class GepProcess {
 	public double Test() {
 		int nRow = this.TestData.length;
 		int nCol = this.TestData[0].length;
-		Expression Exp = new Expression();
-
 		int j;
+		Expression Exp=new Expression();
 		int tp = 0, fp = 0, tn = 0, fn = 0;
 		for (j = 0; j < nRow; ++j) {
 			double dValue = Exp.GetValue(this.BestIndividual, this.TestData[j]);

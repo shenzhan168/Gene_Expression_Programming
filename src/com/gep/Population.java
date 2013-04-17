@@ -31,7 +31,9 @@ public class Population {
 	 */
 	public void AddIndivdual(Individual Indiv){
 		   PopulationSet.add(Indiv);
+		   this.Size=PopulationSet.size();
 	}
+	
 	public int GetSize(){
 		   return PopulationSet.size();
 	}

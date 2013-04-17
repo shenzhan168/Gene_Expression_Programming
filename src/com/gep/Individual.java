@@ -14,9 +14,6 @@ import java.util.List;
 //
 //
 
-
-
-
 /**
  * ΘΎΙ«ΜεChromosome
  * 

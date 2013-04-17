@@ -16,7 +16,9 @@ package com.gep;
 public class RelativeFitness extends FitnessFunction {
 
 	
-	public void GetFitness() {
-	
+	@Override
+	public void GetFitness(Population Pop, double[][] Data, double[] Fitness) {
+		// TODO Auto-generated method stub
+		
 	}
 }
