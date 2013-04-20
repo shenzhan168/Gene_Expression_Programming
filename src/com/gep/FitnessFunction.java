@@ -16,7 +16,7 @@ package com.gep;
  * @author shenzhan
  *
  */
-public abstract class FitnessFunction {
+public abstract  class FitnessFunction {
 	
 	public FitnessFunction(){
 		

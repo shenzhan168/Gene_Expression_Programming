@@ -109,4 +109,16 @@ public class Expression {
 	    	    }
 	      }
 	}
+	
+	public int GetIndivValidLen(Individual Indiv ){
+		  int i;
+		   int res=0;
+		   //计算每个基因的值  连接函数使用 +  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		   for(i=0;i<this.GeneCount;++i){
+			    List<String> listGene=Indiv.Chrom.subList(i*GeneLength, i*GeneLength+GeneLength);
+			    GetValidLength(listGene) ;                 
+			    res+=this.nValidLen;
+		   }
+		   return res;		
+	}
 }
