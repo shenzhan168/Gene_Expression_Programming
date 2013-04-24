@@ -11,7 +11,7 @@ public class GEPRun {
      public GepProcess GepPro;
      public static int nCheck;
      
-     private double[][] ReadData(String sPath) throws IOException{
+     public double[][] ReadData(String sPath) throws IOException{
     	 
     	 double[][] digital=new double[1000][1000];
     	 
@@ -48,27 +48,55 @@ public class GEPRun {
      }  
      
      /**
+      * 用部分特征进行数据测试  部分特征由nAttri[] 给出
+      * @param nAttri
+      */
+     public double[][] SelectAttri(int[] nAttri,double[][] Data){
+           int nRow=Data.length;
+           int nCol=Data[0].length;
+           double[][] dRes=new double[nRow][nAttri.length+1]; //输出的数组
+    	   
+           int i,j,k;
+           int nIndex;
+           for(i=0;i<nAttri.length;++i){
+        	   nIndex=nAttri[i];
+        	   for(j=0;j<nRow;++j){
+        		   dRes[j][i]=Data[j][nIndex];
+        	   }
+           }
+           
+           for(j=0;j<nRow;++j){
+        	   dRes[j][nAttri.length]=Data[j][nCol-1];
+           }
+           
+           
+           return dRes;
+    	 
+     }
+     
+     
+     /**
       * 设置参数
       */
-     private void SetValue(){
+     public void SetValue(){
     	 
-    	 GepPro.FitnessFunType="ConciseClassify";  //设置适应值函数  可选 SampleClassify:简单分类函数 ,  SenSepClassify:适应度*敏感度   ConciseClassify 简洁模型
+    	 GepPro.FitnessFunType="SenSepClassify";  //设置适应值函数  可选 SampleClassify:简单分类函数 ,  SenSepClassify:适应度*敏感度   ConciseClassify 简洁模型
     	  GepPro.MaxGeneration=200;
     	  GepPro.HeadLength=10;
     	  GepPro.GeneCount=4;
     	  GepPro.PopulationSize=100;
-    	  GepPro.FeatureNum=4;    //特征个数------------------------------------------------
+    	  GepPro.FeatureNum=34;    //特征个数------------------------------------------------
     	  
    //--------------------------------------------------------- 	  
     	  try {
-			GepPro.TrainData=ReadData("data/sample.txt");//--------------------------------------
+			GepPro.TrainData=ReadData("data/train.txt");//--------------------------------------
 	      
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
     	  
     	  try {
-			GepPro.TestData=ReadData("data/testSample.txt");//-------------------------------------------------
+			GepPro.TestData=ReadData("data/test.txt");//-------------------------------------------------
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -89,7 +117,7 @@ public class GEPRun {
     	 
      }
      
-     private void RunGep(){
+     public void RunGep(){
     	 
     	 
     	 GepPro=new GepProcess();
@@ -98,12 +126,12 @@ public class GEPRun {
     	 GepPro.InitialPopulation();
     	  
     	 do{
-    		
+    		GepPro.Statictis();
     		 
 			GepPro.EvalutePopulaton();
 			
-			Print();
-			System.out.println("before average Fitness "+GepPro.AverageFitness());
+			//Print();
+			//System.out.println("before average Fitness "+GepPro.AverageFitness());
 			
 			GepPro.Select();
 			
@@ -130,7 +158,7 @@ public class GEPRun {
 	
 			
 			++nGeneration;
-			System.out.println(nGeneration +":  "+GepPro.BestIndividual.Fitness +"\n");
+			//System.out.println(nGeneration +":  "+GepPro.BestIndividual.Fitness +"\n");
 			
 			
     	 }while( ((1000-GepPro.BestIndividual.Fitness)>0.03)  && nGeneration<GepPro.MaxGeneration ) ;
@@ -138,6 +166,7 @@ public class GEPRun {
     	 System.out.println(GepPro.BestIndividual.Fitness);
         
     	  System.out.println("测试  "+ GepPro.Test());
+    	  GepPro.Statictis();
     	 
      }
      
@@ -149,7 +178,7 @@ public class GEPRun {
      }
      
      
-     private void Print(){
+     public void Print(){
     	 for(int i=0;i<GepPro.PopulationSize;++i){
     	  		 
     		 for(int j=0;j<GepPro.GeneCount;++j){

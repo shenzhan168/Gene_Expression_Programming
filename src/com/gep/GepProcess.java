@@ -21,11 +21,11 @@ public class GepProcess {
 	public Population Pop; // 种群
 	public FunctionSet Fun; // 函数集
 	public List<String> Feature;
-	
+
 	/**
 	 * 适应值函数
 	 */
-	public String FitnessFunType; 
+	public String FitnessFunType;
 
 	public int MaxGeneration; //
 	public int PopulationSize;
@@ -46,7 +46,7 @@ public class GepProcess {
 	public double Error;
 	public double SuccessRate;
 
-	public int FeatureNum; // 特征数量
+	public static int FeatureNum; // 特征数量
 	public String[] sFullSet; // 函数集合+特征集合
 	public String[] sFeatureSet; // 特征集合
 
@@ -58,15 +58,17 @@ public class GepProcess {
 	public Individual BestIndividual;
 	public int BestIndivNum;
 
+	public int[] FeatureSta = null;
+
 	/**
 	 * 群体初始化
 	 **/
 	public void InitialPopulation() {
 		// 初始化//===========================================================================
 		Fitness = new double[this.PopulationSize];
-		Fun=new FunctionSet();
-		Pop=new Population();
-        //================================================================================
+		Fun = new FunctionSet();
+		Pop = new Population();
+		// ================================================================================
 		// 产生必要的字符集合
 
 		// 特征
@@ -79,18 +81,19 @@ public class GepProcess {
 		this.GeneLength = this.HeadLength + nTail; // 计算基因长度
 		this.ChromosomeLength = GepProcess.GeneCount * GepProcess.GeneLength; // 染色体长度
 
-		String[] sFunSet =new String[Fun.sFunction.size()]; //// 函数集合
-		for(int i=0;i<Fun.sFunction.size();++i){
-			sFunSet[i]=Fun.sFunction.get(i);
+		String[] sFunSet = new String[Fun.sFunction.size()]; // // 函数集合
+		for (int i = 0; i < Fun.sFunction.size(); ++i) {
+			sFunSet[i] = Fun.sFunction.get(i);
 		}
-		
-		sFullSet = new String[sFunSet.length + sFeatureSet.length]; // 函数集合  +特征集合
-																	
+
+		sFullSet = new String[sFunSet.length + sFeatureSet.length]; // 函数集合
+																	// +特征集合
+
 		int nSetLen = sFunSet.length + sFeatureSet.length;
 		for (int i = 0; i < sFunSet.length; ++i) {
 			sFullSet[i] = sFunSet[i];
 		}
-		int m=0;
+		int m = 0;
 		for (int i = sFunSet.length; i < nSetLen; ++i) {
 			sFullSet[i] = sFeatureSet[m++];
 		}
@@ -128,24 +131,25 @@ public class GepProcess {
 	 **/
 	public void EvalutePopulaton() {
 
-		     //产生适应值计算 对象 
-             FitnessFunction FitFun=FitnessFunFactory.GetFitnessFun(this.FitnessFunType);
-              //计算适应值
-             if(null==FitFun){
-            	 System.out.println("参数 适应度函数不正确");
-            	 System.exit(1);
-             }
-             FitFun.GetFitness(this.Pop, this.TrainData, this.Fitness);
-             
+		// 产生适应值计算 对象
+		FitnessFunction FitFun = FitnessFunFactory
+				.GetFitnessFun(this.FitnessFunType);
+		// 计算适应值
+		if (null == FitFun) {
+			System.out.println("参数 适应度函数不正确");
+			System.exit(1);
+		}
+		FitFun.GetFitness(this.Pop, this.TrainData, this.Fitness);
+
 	}
 
 	/**
 	 * 判断gep是否要结束
 	 **/
 	public boolean IsTerminate() {
-                
-		     return false;
-		
+
+		return false;
+
 	}
 
 	/**
@@ -161,12 +165,12 @@ public class GepProcess {
 			dTotal += this.Fitness[i];
 		}
 
-		//每个个体的概率
+		// 每个个体的概率
 		double[] dRate = new double[this.PopulationSize];
 
 		if (dTotal == 0) {
 			for (int i = 0; i < this.PopulationSize; ++i) {
-				dRate[i] = 1 /(double) this.PopulationSize;
+				dRate[i] = 1 / (double) this.PopulationSize;
 			}
 		} else {
 			for (int i = 0; i < this.PopulationSize; ++i) {
@@ -189,16 +193,16 @@ public class GepProcess {
 		for (int i = 1; i < this.PopulationSize; ++i) {
 			double d = random.nextDouble();
 			int j = 0;
-			for(j=0;j<this.PopulationSize;++j){
-				if(d<dWheel[j]){
+			for (j = 0; j < this.PopulationSize; ++j) {
+				if (d < dWheel[j]) {
 					break;
 				}
 			}
-			if(j>=this.PopulationSize){
-				j=this.PopulationSize-1;
+			if (j >= this.PopulationSize) {
+				j = this.PopulationSize - 1;
 			}
-			Individual SelectIndiv=(Individual)this.Pop.Get(j).clone();   //复制个体
-			NewPop.AddIndivdual(SelectIndiv);                                          //加入到新的种群中
+			Individual SelectIndiv = (Individual) this.Pop.Get(j).clone(); // 复制个体
+			NewPop.AddIndivdual(SelectIndiv); // 加入到新的种群中
 		}
 
 		this.Pop = NewPop;
@@ -247,8 +251,6 @@ public class GepProcess {
 		}
 	}
 
-	
-	
 	/**
 	 * IS 插串
 	 */
@@ -285,8 +287,8 @@ public class GepProcess {
 				List<String> listTemp = Indiv.Chrom.subList(nSouPos, nSouPos
 						+ nLength);
 				Indiv.Chrom.addAll(nTarPos, listTemp);
-				for (int j =0; j<nLength; ++j) {
-					Indiv.Chrom.remove(nStart+this.HeadLength);
+				for (int j = 0; j < nLength; ++j) {
+					Indiv.Chrom.remove(nStart + this.HeadLength);
 				}
 
 			}
@@ -317,26 +319,28 @@ public class GepProcess {
 				do {
 					nHeadPos = random.nextInt(this.HeadLength);
 				} while (nHeadPos == 0);
-				nHeadPos+=nStart;
-				while (nHeadPos <( this.HeadLength+nStart)  &&  !Fun.IsFunction(Indiv.Get(nHeadPos))) {
+				nHeadPos += nStart;
+				while (nHeadPos < (this.HeadLength + nStart)
+						&& !Fun.IsFunction(Indiv.Get(nHeadPos))) {
 					++nHeadPos;
 				}
-				if (nHeadPos >=(nStart+ this.HeadLength) ) { // 找不到函数符号
+				if (nHeadPos >= (nStart + this.HeadLength)) { // 找不到函数符号
 					continue;
 				}
 				// 判断长度
-				if (this.HeadLength - (nHeadPos-nStart) < nLength) {
-					nLength = this.HeadLength -( nHeadPos-nStart);
+				if (this.HeadLength - (nHeadPos - nStart) < nLength) {
+					nLength = this.HeadLength - (nHeadPos - nStart);
 				}
 
 				// 基因插窜
-				List<String> listTemp = Indiv.Chrom.subList(nHeadPos, nHeadPos+ nLength);
+				List<String> listTemp = Indiv.Chrom.subList(nHeadPos, nHeadPos
+						+ nLength);
 				Indiv.Chrom.addAll(nStart, listTemp);
-				
-				for (int j=0;j<nLength;++j) {
-					Indiv.Chrom.remove(nStart+this.HeadLength);
+
+				for (int j = 0; j < nLength; ++j) {
+					Indiv.Chrom.remove(nStart + this.HeadLength);
 				}
-				
+
 			}
 		}
 
@@ -359,7 +363,7 @@ public class GepProcess {
 				int nGeneNO; // 随机基因
 				do {
 					nGeneNO = random.nextInt(this.GeneCount);
-				} while (0==nGeneNO );
+				} while (0 == nGeneNO);
 
 				// 基因插串
 				int nStart = nGeneNO * this.GeneLength;
@@ -368,9 +372,8 @@ public class GepProcess {
 				Indiv.Chrom.addAll(0, listTemp); // 把基因插入到开始位置
 				// 删除原位置的基因
 				for (int j = nStart; j < nEnd; ++j) {
-					Indiv.Chrom.remove(nStart+this.GeneLength);
+					Indiv.Chrom.remove(nStart + this.GeneLength);
 				}
-				
 
 			}
 		}
@@ -502,18 +505,18 @@ public class GepProcess {
 		int nRow = this.TestData.length;
 		int nCol = this.TestData[0].length;
 		int j;
-		Expression Exp=new Expression();
+		Expression Exp = new Expression();
 		int tp = 0, fp = 0, tn = 0, fn = 0;
 		for (j = 0; j < nRow; ++j) {
 			double dValue = Exp.GetValue(this.BestIndividual, this.TestData[j]);
 			// 二分类 0 类
-			if (TestData[j][nCol-1] == 1) {
+			if (TestData[j][nCol - 1] == 1) {
 				if (dValue < 0) {
 					tp++;
 				} else {
 					fp++;
 				}
-			} else if (TestData[j][nCol-1] == 2) {
+			} else if (TestData[j][nCol - 1] == 2) {
 				if (dValue >= 0) {
 					tn++;
 				} else {
@@ -521,20 +524,95 @@ public class GepProcess {
 				}
 			}
 		}
-		return (tp+tn)/(double)nRow;
+		return (tp + tn) / (double) nRow;
 
 	}
-	
-	//-----------------------------------------------------------------------------------
-	public double AverageFitness(){
-		double dRes=0;
-		for(int i=0;i<this.PopulationSize;++i){
-			dRes+=this.Pop.Get(i).Fitness;
+
+	// ====================================================================================================
+	//====================================================================================================
+	public double AverageFitness() {
+		double dRes = 0;
+		for (int i = 0; i < this.PopulationSize; ++i) {
+			dRes += this.Pop.Get(i).Fitness;
 		}
-		dRes=dRes/this.PopulationSize;
+		dRes = dRes / this.PopulationSize;
 		return dRes;
 	}
-	
-	
 
+	/**
+	 * 统计每个特征出现的个数
+	 */
+	public void Statictis() {
+		if (this.FeatureSta == null) {
+			this.FeatureSta = new int[this.FeatureNum];
+		}
+		int i, j;
+		for (i = 0; i < this.Pop.Size; ++i) {
+			Individual Indiv = Pop.Get(i);
+			for (j = 0; j < Indiv.Chrom.size(); ++j) {
+				String str = Indiv.Get(j);
+				if (0 == Fun.GetParamCount(str)) {
+					int k = Integer.parseInt(str);
+					FeatureSta[k]++;
+				}
+			}
+		}
+//		for(i=0;i<FeatureSta.length;++i){
+//		     System.out.println(FeatureSta[i]);
+//		}	
+	}
+	
+	public List<FeatureStru> GetFeatureOrder(){
+		  int i,j,k;
+		  
+		  //填充数据
+		  List<FeatureStru> listFeatStru=new LinkedList<FeatureStru>();
+		  for(i=0;i<this.FeatureSta.length;++i){
+			    FeatureStru FeatStru=new FeatureStru();
+			    FeatStru.nFeatureNO=i;
+			    FeatStru.nFeatureCount=this.FeatureSta[i];
+			    listFeatStru.add(FeatStru);
+		  }
+		  
+		  //排名  排序
+		  //选择排序
+		  for(i=0;i<listFeatStru.size()-1;++i){
+			  k=i;  
+			  FeatureStru Max=listFeatStru.get(i);
+			  for(j=i+1;j<listFeatStru.size();++j){
+				  if(listFeatStru.get(j).nFeatureCount>Max.nFeatureCount){
+					  k=j;
+					  Max=listFeatStru.get(j);
+				  }
+			  }
+			  if(k!=i){
+				  listFeatStru.set(k,listFeatStru.get(i));
+				  listFeatStru.set(i,Max);
+			  }
+		  }
+		  
+		  return listFeatStru;
+	}
+	
+// class Comparator implements Comparator{
+//
+//		 public int compare(FeatureStru a,FeatureStru b) {
+//			 if(a.nFeatureCount>b.nFeatureCount){
+//				 return 1;
+//			 }
+//			 else{
+//				 return 0;
+//			 }
+//		   
+//		}
+//
+//		@Override
+//		public int compare(Object o1, Object o2) {
+//			// TODO Auto-generated method stub
+//			return 0;
+//		}
+//	}
+	
 }
+
+ 

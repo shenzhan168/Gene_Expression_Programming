@@ -121,4 +121,29 @@ public class Expression {
 		   }
 		   return res;		
 	}
+	
+	/**
+	 * 计算使用到的属性的个数
+	 * @param Indiv
+	 * @return
+	 */
+	public int GetAttriNum(Individual Indiv){
+		
+		 int i;
+		   int res=0;
+		   //计算每个基因的值  连接函数使用 +  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		   for(i=0;i<this.GeneCount;++i){
+			    List<String> listGene=Indiv.Chrom.subList(i*GeneLength, i*GeneLength+GeneLength);
+			    GetValidLength(listGene) ;                 
+			    int nLen=this.nValidLen;
+			    for(int j=0; j<nLen;++j){
+			    	if(0==Fun.GetParamCount(listGene.get(j))){
+			    		++res;
+			    	}
+			    }
+			    
+		   }
+		   return res;	
+	}
+	
 }
