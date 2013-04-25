@@ -82,21 +82,21 @@ public class GEPRun {
     	 
     	 GepPro.FitnessFunType="SenSepClassify";  //设置适应值函数  可选 SampleClassify:简单分类函数 ,  SenSepClassify:适应度*敏感度   ConciseClassify 简洁模型
     	  GepPro.MaxGeneration=200;
-    	  GepPro.HeadLength=10;
-    	  GepPro.GeneCount=4;
-    	  GepPro.PopulationSize=100;
-    	  GepPro.FeatureNum=34;    //特征个数------------------------------------------------
+    	  GepPro.HeadLength=5;
+    	  GepPro.GeneCount=2;
+    	  GepPro.PopulationSize=30;
+    	  GepPro.FeatureNum=24;    //特征个数------------------------------------------------
     	  
    //--------------------------------------------------------- 	  
     	  try {
-			GepPro.TrainData=ReadData("data/train.txt");//--------------------------------------
+			GepPro.TrainData=ReadData("data/AHC_train.txt");//--------------------------------------
 	      
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
     	  
     	  try {
-			GepPro.TestData=ReadData("data/test.txt");//-------------------------------------------------
+			GepPro.TestData=ReadData("data/AHC_test.txt");//-------------------------------------------------
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -126,7 +126,7 @@ public class GEPRun {
     	 GepPro.InitialPopulation();
     	  
     	 do{
-    		GepPro.Statictis();
+    		
     		 
 			GepPro.EvalutePopulaton();
 			
@@ -135,6 +135,8 @@ public class GEPRun {
 			
 			GepPro.Select();
 			
+			GepPro.Statictis();//统计
+			//Print();
 			 
 			GepPro.Mutation();
 		
@@ -166,7 +168,8 @@ public class GEPRun {
     	 System.out.println(GepPro.BestIndividual.Fitness);
         
     	  System.out.println("测试  "+ GepPro.Test());
-    	  GepPro.Statictis();
+    	  
+    	  GepPro.GetFeatureOrder();
     	 
      }
      
@@ -191,6 +194,7 @@ public class GEPRun {
     		 System.out.print("  :  "+GepPro.Fitness[i] +" value"+GepPro.Pop.Get(i).Value);
     		 System.out.println();
     	 }
+		
      }
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import com.gep.*;
 
 public class FeatureWeight {
-	GEPRun GepRun=new GEPRun();
+	GEPRun GepRun=null;
 	
 	List< List<FeatureStru> > FeatSet=new LinkedList<  List<FeatureStru> >();
 	
@@ -14,6 +14,8 @@ public class FeatureWeight {
 	public void GetFeatureData(){
 		int nTime=10;
 		for(int i=0;i<nTime;++i){
+			
+			GepRun=new GEPRun();
 			GepRun.RunGep();
 			GepProcess GepPro=GepRun.GepPro;
 			

@@ -545,11 +545,16 @@ public class GepProcess {
 	public void Statictis() {
 		if (this.FeatureSta == null) {
 			this.FeatureSta = new int[this.FeatureNum];
+			for(int n=0;n<this.FeatureNum;++n){
+				FeatureSta[n]=0;
+			}
 		}
 		int i, j;
+		Expression Exp=new Expression();
 		for (i = 0; i < this.Pop.Size; ++i) {
 			Individual Indiv = Pop.Get(i);
-			for (j = 0; j < Indiv.Chrom.size(); ++j) {
+			int nValidLen=Exp.GetIndivValidLen(Indiv);
+			for (j = 0; j < nValidLen; ++j) {
 				String str = Indiv.Get(j);
 				if (0 == Fun.GetParamCount(str)) {
 					int k = Integer.parseInt(str);
@@ -558,7 +563,7 @@ public class GepProcess {
 			}
 		}
 //		for(i=0;i<FeatureSta.length;++i){
-//		     System.out.println(FeatureSta[i]);
+//		     System.out.print(FeatureSta[i] +"  ");
 //		}	
 	}
 	
@@ -591,27 +596,21 @@ public class GepProcess {
 			  }
 		  }
 		  
+		  for(i=0;i<listFeatStru.size();++i){
+			  listFeatStru.get(i).nOrder=i;
+		  }
+		  
+//		  for(i=0;i<listFeatStru.size();++i){
+//			  FeatureStru Temp=listFeatStru.get(i);
+//			  String str=String.format("%3d  %3d  %3d",Temp.nFeatureNO,Temp.nFeatureCount,Temp.nOrder);
+//			  System.out.println(str);
+//		  }
+		  
+		  
 		  return listFeatStru;
 	}
 	
-// class Comparator implements Comparator{
-//
-//		 public int compare(FeatureStru a,FeatureStru b) {
-//			 if(a.nFeatureCount>b.nFeatureCount){
-//				 return 1;
-//			 }
-//			 else{
-//				 return 0;
-//			 }
-//		   
-//		}
-//
-//		@Override
-//		public int compare(Object o1, Object o2) {
-//			// TODO Auto-generated method stub
-//			return 0;
-//		}
-//	}
+
 	
 }
 
