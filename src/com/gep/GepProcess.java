@@ -352,6 +352,11 @@ public class GepProcess {
 	public void TransPosGene() {
 		Random random = new Random();
 		double dRate;
+		
+		//如果只有一个基因 则跳过这个步骤
+		if(this.GeneCount==1){
+			return;
+		}
 
 		for (int i = 0; i < this.PopulationSize; ++i) {
 			dRate = random.nextDouble();
@@ -566,7 +571,9 @@ public class GepProcess {
 //		     System.out.print(FeatureSta[i] +"  ");
 //		}	
 	}
-	
+	/**
+	 *  根据特征的权值进行排序
+	 */
 	public List<FeatureStru> GetFeatureOrder(){
 		  int i,j,k;
 		  
