@@ -20,7 +20,12 @@ public class FeatureSelect {
 	FeatStru[] FeatureSta=null;
 	GEPRun GepRun;
 	
-	//超级集合
+	double[] Accuracy;
+	int[] nAttri;
+	
+	/**
+	 * 获取超级集合
+	 */
 	public void GetSuperSet(){
 		int i,j,k;
 		for(i=0;i<10;++i){
@@ -33,6 +38,9 @@ public class FeatureSelect {
 		}
 	}
 	
+	/**
+	 * 对特征出现的频数进行排序
+	 */
 	public void GetOrder(){
 		this.FeatureSta=new FeatStru[GepRun.GepPro.FeatureNum];
 		for(int i=0;i<GepRun.GepPro.FeatureNum;++i){
@@ -82,10 +90,64 @@ public class FeatureSelect {
 		
 	}
 	
+	/**
+	 * 试探法 找特征数量
+	 */
+	public void TryFeatureCount(){
+		int i,j,k;
+		Accuracy=new double[FeatureSta.length];
+		for(i=1;i<=FeatureSta.length;++i){
+            //把前i个特征填入到数组nAttri中
+			 nAttri=new int[i];
+			for(j=0;j<i;++j){
+				nAttri[j]=FeatureSta[j].nNO;
+			}
+			
+			//运行3次gep 
+			double dTemp=0;
+			for(k=0;k<3;++k){
+				GEPRun gep=new GEPRun();
+				gep.nAttri=nAttri;
+				gep.RunGep();
+				dTemp+=gep.GepPro.TestAccuracy;
+			}
+			Accuracy[i-1]=dTemp/3;
+		}
+		
+		//
+		System.out.println();
+		for(i=0;i<FeatureSta.length;++i){
+			System.out.print("  "+Accuracy[i]);
+		}
+		
+	}
+	
+	//获取特征准确度最高的 特征子集
+	public void GetSubFeatureSet(){
+		int i,j,k;
+		double max=Accuracy[0];
+		k=0;
+		for(i=1;i<FeatureSta.length;++i){
+			 if(Accuracy[i]>max){
+				 max=Accuracy[i];
+				 k=i;
+			 }
+		}
+		
+		System.out.println();
+		for(j=0;j<=k;++j){
+			System.out.print("  "+FeatureSta[j].nNO);
+		}
+		
+	}
+	
+	
 	public static void main(String[] args) {
 		FeatureSelect fs=new FeatureSelect();
 		fs.GetSuperSet();
 		fs.GetOrder();
+		fs.TryFeatureCount();
+		fs.GetSubFeatureSet();
 
 	}
 

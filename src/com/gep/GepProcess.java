@@ -45,6 +45,10 @@ public class GepProcess {
 	public double SelectionRange;
 	public double Error;
 	public double SuccessRate;
+	
+	public double TestAccuracy;//测试准确度
+	public double TrainAccuracy;//训练准确度
+	
 
 	public static int FeatureNum; // 特征数量
 	public String[] sFullSet; // 函数集合+特征集合
@@ -529,7 +533,9 @@ public class GepProcess {
 				}
 			}
 		}
-		return (tp + tn) / (double) nRow;
+		this.TestAccuracy=(tp + tn) / (double) nRow;
+		return this.TestAccuracy;
+		
 
 	}
 

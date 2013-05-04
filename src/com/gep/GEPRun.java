@@ -10,6 +10,8 @@ public class GEPRun {
 
 	public GepProcess GepPro;
 	public static int nCheck;
+	
+	public int[] nAttri=null;
 
 	public double[][] ReadData(String sPath) throws IOException {
 
@@ -106,14 +108,16 @@ public class GEPRun {
 			e.printStackTrace();
 		}
 
+		//设置特征子集----------------------------------------------------------------------------------------------------------------------------------------
+		if(nAttri!=null){
 		
-		{
-			int[] nAttri = {20 };
 			GepPro.FeatureNum = nAttri.length;
 			GepPro.TrainData = this.SelectAttri(nAttri, GepPro.TrainData);
 			GepPro.TestData = this.SelectAttri(nAttri, GepPro.TestData);
 		}
-
+      
+		//---------------------------------------------------------------------------------------------------------------------------------------------------
+		
 		GepPro.MutationRate = 0.001;
 		GepPro.ISRate = 0.1;
 		GepPro.RISRate = 0.1;
@@ -146,7 +150,7 @@ public class GEPRun {
 			GepPro.Select();
 
 			GepPro.Statictis();// 统计
-			Print();
+			//Print();
 
 			GepPro.Mutation();
 
@@ -168,10 +172,12 @@ public class GEPRun {
 
 		} while (((1 - GepPro.BestIndividual.Fitness) > 0.03)
 				&& nGeneration < GepPro.MaxGeneration);
+		
+		 GepPro.Test();
+		 
+		//System.out.println(GepPro.BestIndividual.Fitness);
 
-		System.out.println(GepPro.BestIndividual.Fitness);
-
-		System.out.println("测试  " + GepPro.Test());
+		//System.out.println("测试  " + GepPro.Test());
 
 		GepPro.GetFeatureOrder();
 
@@ -183,6 +189,8 @@ public class GEPRun {
 		gep.RunGep();
 	}
 
+	
+	
 	public void Print() {
 		for (int i = 0; i < GepPro.PopulationSize; ++i) {
 
