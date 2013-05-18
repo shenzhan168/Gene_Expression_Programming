@@ -85,24 +85,24 @@ public class GEPRun {
 													// SampleClassify:简单分类函数 ,
 													// SenSepClassify:适应度*敏感度
 													// ConciseClassify 简洁模型
-		GepPro.MaxGeneration = 100;
+		GepPro.MaxGeneration = 200;
 		GepPro.HeadLength = 10;
-		GepPro.GeneCount = 2;
-		GepPro.PopulationSize = 40;
-		GepPro.FeatureNum = 34; // 特征个数------------------------------------------------
+		GepPro.GeneCount = 4;
+		GepPro.PopulationSize = 100;
+		GepPro.FeatureNum = 35; // 特征个数------------------------------------------------
 
 		// ---------------------------------------------------------
 		// int[] nAttri={4 ,28, 32, 16, 8, 5 ,31, 12, 27, 11, 23};
 
 		try {
-			GepPro.TrainData = ReadData("data/train.txt");// --------------------------------------
+			GepPro.TrainData = ReadData("data/IonoTrain.txt");// --------------------------------------
 
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 
 		try {
-			GepPro.TestData = ReadData("data/test.txt");// -------------------------------------------------
+			GepPro.TestData = ReadData("data/IonoTest.txt");// -------------------------------------------------
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -118,7 +118,7 @@ public class GEPRun {
       
 		//---------------------------------------------------------------------------------------------------------------------------------------------------
 		
-		GepPro.MutationRate = 0.001;
+		GepPro.MutationRate = 0.0051;
 		GepPro.ISRate = 0.1;
 		GepPro.RISRate = 0.1;
 		int[] nLen = { 1, 2, 3 };
@@ -127,9 +127,9 @@ public class GEPRun {
 		GepPro.RISElemLength = nLen;
 		GepPro.GeneTransRate = 0.1;
 
-		GepPro.OnePRecomRate = 0.01;
-		GepPro.TwoPRecomRate = 0.01;
-		GepPro.GeneRecomRate = 0.01;
+		GepPro.OnePRecomRate = 0.3;
+		GepPro.TwoPRecomRate = 0.31;
+		GepPro.GeneRecomRate = 0.1;
 
 	}
 
@@ -144,7 +144,7 @@ public class GEPRun {
 
 			GepPro.EvalutePopulaton();
 
-			// Print();
+			 //Print();
 			// System.out.println("before average Fitness "+GepPro.AverageFitness());
 
 			GepPro.Select();
@@ -173,11 +173,13 @@ public class GEPRun {
 		} while (((1 - GepPro.BestIndividual.Fitness) > 0.03)
 				&& nGeneration < GepPro.MaxGeneration);
 		
-		 GepPro.Test();
+		// GepPro.Test();
 		 
-		//System.out.println(GepPro.BestIndividual.Fitness);
-
-		//System.out.println("测试  " + GepPro.Test());
+		System.out.println(GepPro.BestIndividual.Fitness);
+		
+      
+		
+		System.out.println("测试  " + GepPro.Test());
 
 		GepPro.GetFeatureOrder();
 
@@ -185,8 +187,16 @@ public class GEPRun {
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public static void main(String[] args) {
-		GEPRun gep = new GEPRun();
-		gep.RunGep();
+		
+		double d=0;
+		for(int i=0;i<5;++i)
+		{
+		   GEPRun gep = new GEPRun();
+		  gep.RunGep();
+		  d+=gep.GepPro.TestAccuracy;
+		}
+		d=d/5;
+		System.out.println("平均准确度为  "+d);
 	}
 
 	
