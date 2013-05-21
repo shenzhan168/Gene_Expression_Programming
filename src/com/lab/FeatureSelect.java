@@ -28,7 +28,7 @@ public class FeatureSelect {
 	 */
 	public void GetSuperSet(){
 		int i,j,k;
-		for(i=0;i<10;++i){
+		for(i=0;i<4;++i){
 		    GepRun=new GEPRun();
 			GepRun.RunGep();
 			Population Pop=GepRun.GepPro.Pop;
@@ -46,25 +46,39 @@ public class FeatureSelect {
 		for(int i=0;i<GepRun.GepPro.FeatureNum;++i){
 			FeatureSta[i]=new FeatStru();
 			FeatureSta[i].nNO=i;
+			FeatureSta[i].nCount=0;
 		}
 		
 		Expression Exp=new Expression();
 		FunctionSet Fun=new FunctionSet();
 		
+		
+		//特征频数的统计
+		
 		for(int i=0;i<listIndivSet.size();++i){
+			
 			 Individual Indiv=listIndivSet.get(i);
-			 int nLen=Exp.GetIndivValidLen(Indiv);
-			 for(int j=0;j<nLen;++j){
-				 String str=Indiv.Get(j);
-				 int n=Fun.GetParamCount(str);
-				 if(0==n){
-					  int index=Integer.parseInt(str);
-					  FeatureSta[index].nCount++;
-				 }
-			 }
 			 
+			 for(int j=0;j<GepProcess.GeneCount;++j){
+				 
+				  List<String> Gene=Indiv.GetGene(j);
+				   int nLen=Exp.GetValidLength(Gene);
+				   
+				   for(int k=0;k<nLen;++k){
+						 String str=Gene.get(k);
+						 int n=Fun.GetParamCount(str);
+						 if(0==n){
+							  int index=Integer.parseInt(str);
+							  FeatureSta[index].nCount++;
+						 }
+					 }
+				 
+			 }
+			 	 
 		}
 		
+		
+		// 排序 选择排序
 		int i,j = 0,k;
 		FeatStru Max;
 		for(i=0;i<FeatureSta.length-1;++i){
@@ -82,11 +96,17 @@ public class FeatureSelect {
 			}
 		}
 		
-		
+		//输出结果
 		for(i=0;i<FeatureSta.length;++i){
 			String str=String.format("%3d ", FeatureSta[i].nNO);//,FeatureSta[i].nCount);
 			System.out.print(str);
 		}
+		System.out.println();
+		for(i=0;i<FeatureSta.length;++i){
+			String str=String.format("%3d ", FeatureSta[i].nCount);//,FeatureSta[i].nCount);
+			System.out.print(str);
+		}
+		
 		
 	}
 	
@@ -146,8 +166,8 @@ public class FeatureSelect {
 		FeatureSelect fs=new FeatureSelect();
 		fs.GetSuperSet();
 		fs.GetOrder();
-		fs.TryFeatureCount();
-		fs.GetSubFeatureSet();
+		//fs.TryFeatureCount();
+		//fs.GetSubFeatureSet();
 
 	}
 

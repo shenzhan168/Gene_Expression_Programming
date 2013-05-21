@@ -28,6 +28,9 @@ public class GEPRun {
 		while (temp != null) {
 
 			tempArray = temp.split(",");
+			
+			GepPro.FeatureNum=tempArray.length-1;  //==========================================================
+			
 			for (int j = 0; j < tempArray.length; j++) {
 				digital[i][j] = Double.parseDouble(tempArray[j]);
 
@@ -38,6 +41,9 @@ public class GEPRun {
 
 		int nRow = i;
 		int nCol = tempArray.length;
+		
+		
+		
 
 		double[][] Res = new double[nRow][nCol];
 		for (i = 0; i < nRow; ++i) {
@@ -150,7 +156,7 @@ public class GEPRun {
 			GepPro.Select();
 
 			GepPro.Statictis();// 统计
-			//Print();
+			Print();
 
 			GepPro.Mutation();
 
@@ -188,15 +194,15 @@ public class GEPRun {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public static void main(String[] args) {
 		
-		double d=0;
-		for(int i=0;i<5;++i)
-		{
+//		double d=0;
+//		for(int i=0;i<5;++i)
+//		{
 		   GEPRun gep = new GEPRun();
 		  gep.RunGep();
-		  d+=gep.GepPro.TestAccuracy;
-		}
-		d=d/5;
-		System.out.println("平均准确度为  "+d);
+//		  d+=gep.GepPro.TestAccuracy;
+//		}
+//		d=d/5;
+//		System.out.println("平均准确度为  "+d);
 	}
 
 	

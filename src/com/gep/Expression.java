@@ -58,9 +58,9 @@ public class Expression {
 	 * @param Gene
 	 */
 	private double GetGeneValue(List<String> Gene) {
-		  this.GetValidLength(Gene);
+		 
 		  this.FillData(Gene);
-		  int nButton=this.nValidLen;
+		  int nButton= this.GetValidLength(Gene);
 		  int nParamCount;
 		  int j,k;
 		  int i=nButton-1;
@@ -83,7 +83,7 @@ public class Expression {
 	 * 计算基因的有效长度
 	 * @return
 	 */
-	private  void GetValidLength(List<String> Gene){
+	public  int GetValidLength(List<String> Gene){
 		 int i=0;
 		 int nValidLen=1;
 		 int nParam;
@@ -92,7 +92,7 @@ public class Expression {
 			   nValidLen+=nParam;
 			   ++i;
 		 }while(i<nValidLen);
-		 this.nValidLen= nValidLen;
+		 return nValidLen;
 	}
 	
 	/**
@@ -100,7 +100,8 @@ public class Expression {
 	 * @param Gene
 	 */
 	private void FillData(List<String> Gene) {
-	      for(int i=0;i<this.nValidLen;++i){
+		  int nLen= this.GetValidLength(Gene);
+	      for(int i=0;i<nLen;++i){
 	    	    int nParam=Fun.GetParamCount(Gene.get(i));
 	    	    if(0==nParam){
 	    	    	  String sNum=Gene.get(i);
@@ -116,8 +117,8 @@ public class Expression {
 		   //计算每个基因的值  连接函数使用 +  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		   for(i=0;i<this.GeneCount;++i){
 			    List<String> listGene=Indiv.Chrom.subList(i*GeneLength, i*GeneLength+GeneLength);
-			    GetValidLength(listGene) ;                 
-			    res+=this.nValidLen;
+			                     
+			    res+=GetValidLength(listGene) ;
 		   }
 		   return res;		
 	}
@@ -133,9 +134,8 @@ public class Expression {
 		   int res=0;
 		   //计算每个基因的值  连接函数使用 +  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		   for(i=0;i<this.GeneCount;++i){
-			    List<String> listGene=Indiv.Chrom.subList(i*GeneLength, i*GeneLength+GeneLength);
-			    GetValidLength(listGene) ;                 
-			    int nLen=this.nValidLen;
+			    List<String> listGene=Indiv.Chrom.subList(i*GeneLength, i*GeneLength+GeneLength);              
+			    int nLen=GetValidLength(listGene) ;  
 			    for(int j=0; j<nLen;++j){
 			    	if(0==Fun.GetParamCount(listGene.get(j))){
 			    		++res;

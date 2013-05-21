@@ -102,6 +102,19 @@ public class Individual implements Cloneable{
         return Indiv;
     }
 
+	/**
+	 * 获取基因  基因编号从0开始
+	 * @param n
+	 * @return
+	 */
+	public List<String> GetGene(int n){
+		if(n<0 || n>=GepProcess.GeneCount){
+			return null;
+		}
+		
+		return this.Chrom.subList(n*GepProcess.GeneLength, n*GepProcess.GeneLength+GepProcess.GeneLength);
+		
+	}
 	
 	
 }
