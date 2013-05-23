@@ -45,10 +45,9 @@ public class GepProcess {
 	public double SelectionRange;
 	public double Error;
 	public double SuccessRate;
-	
-	public double TestAccuracy;//测试准确度
-	public double TrainAccuracy;//训练准确度
-	
+
+	public double TestAccuracy;// 测试准确度
+	public double TrainAccuracy;// 训练准确度
 
 	public static int FeatureNum; // 特征数量
 	public String[] sFullSet; // 函数集合+特征集合
@@ -62,7 +61,10 @@ public class GepProcess {
 	public Individual BestIndividual;
 	public int BestIndivNum;
 
-	public int[] FeatureSta = null;
+	public int[] FeatureSta = null;  //统计数据
+	
+	int nClassCount;  //多分类中 分类的数目
+	int nCurrentClass;  //当前训练区分的 分类号
 
 	/**
 	 * 群体初始化
@@ -136,17 +138,20 @@ public class GepProcess {
 	public void EvalutePopulaton() {
 
 		// 产生适应值计算 对象
-		FitnessFunction FitFun = FitnessFunFactory
-				.GetFitnessFun(this.FitnessFunType);
+		MultClassify FitFun = new MultClassify();               //FitnessFunFactory.GetFitnessFun(this.FitnessFunType);
 		// 计算适应值
-		if (null == FitFun) {
-			System.out.println("参数 适应度函数不正确");
-			System.exit(1);
-		}
+//		if (null == FitFun) {
+//			System.out.println("参数 适应度函数不正确");
+//			System.exit(1);
+//		}
+		FitFun.nCurrentClass=this.nCurrentClass;
+		
 		FitFun.GetFitness(this.Pop, this.TrainData, this.Fitness);
 
 	}
 
+	
+	
 	/**
 	 * 判断gep是否要结束
 	 **/
@@ -356,9 +361,9 @@ public class GepProcess {
 	public void TransPosGene() {
 		Random random = new Random();
 		double dRate;
-		
-		//如果只有一个基因 则跳过这个步骤
-		if(this.GeneCount==1){
+
+		// 如果只有一个基因 则跳过这个步骤
+		if (this.GeneCount == 1) {
 			return;
 		}
 
@@ -533,14 +538,13 @@ public class GepProcess {
 				}
 			}
 		}
-		this.TestAccuracy=(tp + tn) / (double) nRow;
+		this.TestAccuracy = (tp + tn) / (double) nRow;
 		return this.TestAccuracy;
-		
 
 	}
 
 	// ====================================================================================================
-	//====================================================================================================
+	// ====================================================================================================
 	public double AverageFitness() {
 		double dRes = 0;
 		for (int i = 0; i < this.PopulationSize; ++i) {
@@ -556,75 +560,96 @@ public class GepProcess {
 	public void Statictis() {
 		if (this.FeatureSta == null) {
 			this.FeatureSta = new int[this.FeatureNum];
-			for(int n=0;n<this.FeatureNum;++n){
-				FeatureSta[n]=0;
+			for (int n = 0; n < this.FeatureNum; ++n) {
+				FeatureSta[n] = 0;
 			}
 		}
 		int i, j;
-		Expression Exp=new Expression();
-		for (i = 0; i < this.Pop.Size; ++i) {
-			Individual Indiv = Pop.Get(i);
-			int nValidLen=Exp.GetIndivValidLen(Indiv);
-			for (j = 0; j < nValidLen; ++j) {
-				String str = Indiv.Get(j);
-				if (0 == Fun.GetParamCount(str)) {
-					int k = Integer.parseInt(str);
-					FeatureSta[k]++;
+		Expression Exp = new Expression();
+		// 特征频数的统计
+
+		for (i = 0; i < this.PopulationSize; ++i) {
+
+			Individual Indiv = this.Pop.Get(i);
+
+			for (j = 0; j < GepProcess.GeneCount; ++j) {
+
+				List<String> Gene = Indiv.GetGene(j);
+				int nLen = Exp.GetValidLength(Gene);
+
+				for (int k = 0; k < nLen; ++k) {
+					String str = Gene.get(k);
+					int n = Fun.GetParamCount(str);
+					if (0 == n) {
+						int index = Integer.parseInt(str);
+						++FeatureSta[index];
+					}
+				}
+
+			}
+
+		}
+		// for(i=0;i<FeatureSta.length;++i){
+		// System.out.print(FeatureSta[i] +"  ");
+		// }
+	}
+
+	/**
+	 * 根据特征的权值进行排序
+	 */
+	public List<FeatureStru> GetFeatureOrder() {
+		int i, j, k;
+
+		// 填充数据
+		List<FeatureStru> listFeatStru = new LinkedList<FeatureStru>();
+		for (i = 0; i < this.FeatureSta.length; ++i) {
+			FeatureStru FeatStru = new FeatureStru();
+			FeatStru.nFeatureNO = i;
+			FeatStru.nFeatureCount = this.FeatureSta[i];
+			listFeatStru.add(FeatStru);
+		}
+
+		// 排名 排序
+		// 选择排序
+		for (i = 0; i < listFeatStru.size() - 1; ++i) {
+			k = i;
+			FeatureStru Max = listFeatStru.get(i);
+			for (j = i + 1; j < listFeatStru.size(); ++j) {
+				if (listFeatStru.get(j).nFeatureCount > Max.nFeatureCount) {
+					k = j;
+					Max = listFeatStru.get(j);
 				}
 			}
+			if (k != i) {
+				listFeatStru.set(k, listFeatStru.get(i));
+				listFeatStru.set(i, Max);
+			}
 		}
-//		for(i=0;i<FeatureSta.length;++i){
-//		     System.out.print(FeatureSta[i] +"  ");
-//		}	
-	}
-	/**
-	 *  根据特征的权值进行排序
-	 */
-	public List<FeatureStru> GetFeatureOrder(){
-		  int i,j,k;
-		  
-		  //填充数据
-		  List<FeatureStru> listFeatStru=new LinkedList<FeatureStru>();
-		  for(i=0;i<this.FeatureSta.length;++i){
-			    FeatureStru FeatStru=new FeatureStru();
-			    FeatStru.nFeatureNO=i;
-			    FeatStru.nFeatureCount=this.FeatureSta[i];
-			    listFeatStru.add(FeatStru);
-		  }
-		  
-		  //排名  排序
-		  //选择排序
-		  for(i=0;i<listFeatStru.size()-1;++i){
-			  k=i;  
-			  FeatureStru Max=listFeatStru.get(i);
-			  for(j=i+1;j<listFeatStru.size();++j){
-				  if(listFeatStru.get(j).nFeatureCount>Max.nFeatureCount){
-					  k=j;
-					  Max=listFeatStru.get(j);
-				  }
-			  }
-			  if(k!=i){
-				  listFeatStru.set(k,listFeatStru.get(i));
-				  listFeatStru.set(i,Max);
-			  }
-		  }
-		  
-		  for(i=0;i<listFeatStru.size();++i){
-			  listFeatStru.get(i).nOrder=i;
-		  }
-		  
-//		  for(i=0;i<listFeatStru.size();++i){
-//			  FeatureStru Temp=listFeatStru.get(i);
-//			  String str=String.format("%3d  %3d  %3d",Temp.nFeatureNO,Temp.nFeatureCount,Temp.nOrder);
-//			  System.out.println(str);
-//		  }
-		  
-		  
-		  return listFeatStru;
-	}
-	
 
-	
+		for (i = 0; i < listFeatStru.size(); ++i) {
+			listFeatStru.get(i).nOrder = i;
+		}
+
+		System.out.println();
+		 for(i=0;i<listFeatStru.size();++i){
+		 FeatureStru Temp=listFeatStru.get(i);
+		 String str=String.format("%6d",Temp.nFeatureNO);
+		 System.out.print(str);
+		 }
+		 System.out.println();
+//		 for(i=0;i<listFeatStru.size();++i){
+//			 FeatureStru Temp=listFeatStru.get(i);
+//			 String str=String.format("%6d",Temp.nFeatureCount);
+//			 System.out.print(str);
+//		}
+//		 System.out.println();
+//		 for(i=0;i<listFeatStru.size();++i){
+//			 FeatureStru Temp=listFeatStru.get(i);
+//			 String str=String.format("%6d",Temp.nOrder);
+//			 System.out.print(str);
+//			 }
+
+		return listFeatStru;
+	}
+
 }
-
- 

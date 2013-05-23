@@ -6,25 +6,49 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class GEPRun {
+public class MultiClassRun {
 
 	public GepProcess GepPro;
 	public static int nCheck;
 	
+	public Individual[] BestIndivs;
+	
 	public int[] nAttri=null;
 
-	public double[][] ReadData(String sPath) throws IOException {
+	/**
+	 * 读取数据
+	 * @param sPath
+	 * @return
+	 * @throws IOException
+	 */
+	public double[][] ReadData(String sPath)  {
 
 		double[][] digital = new double[1000][1000];
 
 		File file = new File(sPath);
 		if (!file.exists() || file.isDirectory())
-			throw new FileNotFoundException();
-		BufferedReader br = new BufferedReader(new FileReader(file));
+			try {
+				throw new FileNotFoundException();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String temp = null;
 		String[] tempArray = null;
 		int i = 0;
-		temp = br.readLine();
+		try {
+			temp = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		while (temp != null) {
 
 			tempArray = temp.split(",");
@@ -35,7 +59,12 @@ public class GEPRun {
 				digital[i][j] = Double.parseDouble(tempArray[j]);
 
 			}
-			temp = br.readLine();
+			try {
+				temp = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			i++;
 		}
 
@@ -83,7 +112,7 @@ public class GEPRun {
 	}
 
 	/**
-	 * 设置参数
+	 * 设置参数+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 */
 	public void SetValue() {
 
@@ -96,33 +125,9 @@ public class GEPRun {
 		GepPro.GeneCount = 3;
 		GepPro.PopulationSize = 50;
 		GepPro.FeatureNum = 35; // 特征个数------------------------------------------------
-
-		// ---------------------------------------------------------
-		 int[] nAttri={7  ,  26   , 20   , 17  ,   5  ,   6    ,25   , 28   , 14  ,  24  ,  11    ,27   ,  1};
-
-		try {
-			GepPro.TrainData = ReadData("data/BreastCancerTrain.txt");// ----设置训练集数据的路径----------------------------------
-
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		try {
-			GepPro.TestData = ReadData("data/BreastCancerTest.txt");// ----设置测试集数据的路径---------------------------------------------
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		//设置特征子集----------------------------------------------------------------------------------------------------------------------------------------
-		if(nAttri!=null){
+		GepPro.nClassCount=3;   //分类器的 数目
 		
-			GepPro.FeatureNum = nAttri.length;
-			GepPro.TrainData = this.SelectAttri(nAttri, GepPro.TrainData);
-			GepPro.TestData = this.SelectAttri(nAttri, GepPro.TestData);
-		}
-      
-		//---------------------------------------------------------------------------------------------------------------------------------------------------
+		
 		
 		GepPro.MutationRate = 0.0051;
 		GepPro.ISRate = 0.1;
@@ -136,27 +141,34 @@ public class GEPRun {
 		GepPro.OnePRecomRate = 0.3;
 		GepPro.TwoPRecomRate = 0.31;
 		GepPro.GeneRecomRate = 0.1;
+		
+
+		GepPro.TrainData = ReadData("data/WineTrain.txt");// ----设置训练集数据的路径----------------------------------
+
+		GepPro.TestData = ReadData("data/WineTest.txt");// ----设置测试集数据的路径---------------------------------------------
+
+		
+		
 
 	}
 
-	public void RunGep() {
-
-		GepPro = new GepProcess();
-		SetValue();
+	
+	/**
+	 * GEP 运行的过程
+	 * @param GepPro
+	 */
+	public void GEPrunning(GepProcess GepPro){
+		
 		int nGeneration = 0;
+		
 		GepPro.InitialPopulation();
 
 		do {
 
 			GepPro.EvalutePopulaton();
-
-			 //Print();
-			// System.out.println("before average Fitness "+GepPro.AverageFitness());
+			Print();
 
 			GepPro.Select();
-
-			GepPro.Statictis();// 统计
-			Print();
 
 			GepPro.Mutation();
 
@@ -173,38 +185,74 @@ public class GEPRun {
 			GepPro.ReComGene();
 
 			++nGeneration;
-			// System.out.println(nGeneration
-			// +":  "+GepPro.BestIndividual.Fitness +"\n");
+		
 
 		} while (((1 - GepPro.BestIndividual.Fitness) > 0.03)
 				&& nGeneration < GepPro.MaxGeneration);
-		
-		// GepPro.Test();
-		 
-		System.out.println(GepPro.BestIndividual.Fitness);
-		
-      
-		
-		System.out.println("测试  " + GepPro.Test());
+	}
+	
+	
+	public void RunGep() {
 
-		GepPro.GetFeatureOrder();
-
+		GepPro = new GepProcess();
+		SetValue();
+		BestIndivs=new Individual[GepPro.nClassCount];
+		int i;
+		//训练多个分类器
+		for(i=1;i<=GepPro.nClassCount;++i){
+			GepPro.nCurrentClass=i;
+			GEPrunning(GepPro);
+			BestIndivs[i-1]=GepPro.BestIndividual;
+		}
+		
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public static void main(String[] args) {
 		
-//		double d=0;
-//		for(int i=0;i<5;++i)
-//		{
-		   GEPRun gep = new GEPRun();
-		  gep.RunGep();
-//		  d+=gep.GepPro.TestAccuracy;
-//		}
-//		d=d/5;
-//		System.out.println("平均准确度为  "+d);
+
+		   MultiClassRun gep = new MultiClassRun();
+		    gep.RunGep();
+		    
+		    for(int i=0;i<gep.BestIndivs.length;++i){
+		    	System.out.println(gep.BestIndivs[i].Fitness);
+		    }
+		    
+		    System.out.println("分类测试准确度  ："+gep.Test());
+
 	}
 
+	public double Test(){
+		
+		int nRow = GepPro.TestData.length;
+		int nCol =  GepPro.TestData[0].length;
+		double[] dValue=new double[GepPro.nClassCount];
+		int i, j,k;
+		Expression Exp = new Expression();
+		int tp = 0, fp = 0;
+		for (j = 0; j < nRow; ++j) {
+			
+			for(i=0;i<GepPro.nClassCount;++i){
+				 dValue[i] = Exp.GetValue(BestIndivs[i], GepPro.TestData[j]);  //把数据放到每一个分类器中 计算出结果
+			}
+			
+			int DataClass=(int) GepPro.TestData[j][nCol-1];   //数据所属的分类
+			
+		   
+			if(DataClass==2){
+			
+			if(dValue[DataClass-1]>0){
+					++tp;
+				}
+				else{
+					++fp;
+				}
+			}	
+	
+		}
+		GepPro.TestAccuracy = (tp ) / (double) (tp+fp);
+		return GepPro.TestAccuracy;
+	}
 	
 	
 	public void Print() {

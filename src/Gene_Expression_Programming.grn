@@ -81,19 +81,19 @@
       <name="=Gene_Expression_Programming/src<com.gep{FitnessFunFactory.java[FitnessFunFactory"/>
       <height="82"/>
       <width="279"/>
-      <x="117"/>
-      <y="33"/>
+      <x="1146"/>
+      <y="16"/>
+   </type>
+   <type>
+      <name="=Gene_Expression_Programming/src<com.gep{MultClassify.java[MultClassify"/>
+      <height="-1"/>
+      <width="-1"/>
+      <x="1160"/>
+      <y="173"/>
    </type>
    <relationship>
-      <class="edu.buffalo.cse.green.relationship.generalization.GeneralizationPart"/>
-      <sourceType="=Gene_Expression_Programming/src<com.gep{RelativeFitness.java[RelativeFitness"/>
-      <targetType="=Gene_Expression_Programming/src<com.gep{FitnessFunction.java[FitnessFunction"/>
-      <bendpoints>
-      </bendpoints>
-   </relationship>
-   <relationship>
       <class="edu.buffalo.cse.green.relationship.dependency.DependencyLPart"/>
-      <sourceType="=Gene_Expression_Programming/src<com.gep{GepProcess.java[GepProcess"/>
+      <sourceType="=Gene_Expression_Programming/src<com.gep{ConciseClassify.java[ConciseClassify"/>
       <targetType="=Gene_Expression_Programming/src<com.gep{Expression.java[Expression"/>
       <bendpoints>
       </bendpoints>
@@ -101,6 +101,34 @@
    <relationship>
       <class="edu.buffalo.cse.green.relationship.generalization.GeneralizationPart"/>
       <sourceType="=Gene_Expression_Programming/src<com.gep{SampleClassify.java[SampleClassify"/>
+      <targetType="=Gene_Expression_Programming/src<com.gep{FitnessFunction.java[FitnessFunction"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.generalization.GeneralizationPart"/>
+      <sourceType="=Gene_Expression_Programming/src<com.gep{MultClassify.java[MultClassify"/>
+      <targetType="=Gene_Expression_Programming/src<com.gep{FitnessFunction.java[FitnessFunction"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.dependency.DependencyLPart"/>
+      <sourceType="=Gene_Expression_Programming/src<com.gep{GepProcess.java[GepProcess"/>
+      <targetType="=Gene_Expression_Programming/src<com.gep{Individual.java[Individual"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.composition.CompositionPart"/>
+      <sourceType="=Gene_Expression_Programming/src<com.gep{Expression.java[Expression"/>
+      <targetType="=Gene_Expression_Programming/src<com.gep{FunctionSet.java[FunctionSet"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.generalization.GeneralizationPart"/>
+      <sourceType="=Gene_Expression_Programming/src<com.gep{AbsoluteFitness.java[AbsoluteFitness"/>
       <targetType="=Gene_Expression_Programming/src<com.gep{FitnessFunction.java[FitnessFunction"/>
       <bendpoints>
       </bendpoints>
@@ -120,16 +148,23 @@
       </bendpoints>
    </relationship>
    <relationship>
-      <class="edu.buffalo.cse.green.relationship.generalization.GeneralizationPart"/>
-      <sourceType="=Gene_Expression_Programming/src<com.gep{AbsoluteFitness.java[AbsoluteFitness"/>
-      <targetType="=Gene_Expression_Programming/src<com.gep{FitnessFunction.java[FitnessFunction"/>
+      <class="edu.buffalo.cse.green.relationship.dependency.DependencyLPart"/>
+      <sourceType="=Gene_Expression_Programming/src<com.gep{GepProcess.java[GepProcess"/>
+      <targetType="=Gene_Expression_Programming/src<com.gep{MultClassify.java[MultClassify"/>
       <bendpoints>
       </bendpoints>
    </relationship>
    <relationship>
       <class="edu.buffalo.cse.green.relationship.dependency.DependencyLPart"/>
       <sourceType="=Gene_Expression_Programming/src<com.gep{GepProcess.java[GepProcess"/>
-      <targetType="=Gene_Expression_Programming/src<com.gep{Individual.java[Individual"/>
+      <targetType="=Gene_Expression_Programming/src<com.gep{Expression.java[Expression"/>
+      <bendpoints>
+      </bendpoints>
+   </relationship>
+   <relationship>
+      <class="edu.buffalo.cse.green.relationship.generalization.GeneralizationPart"/>
+      <sourceType="=Gene_Expression_Programming/src<com.gep{RelativeFitness.java[RelativeFitness"/>
+      <targetType="=Gene_Expression_Programming/src<com.gep{FitnessFunction.java[FitnessFunction"/>
       <bendpoints>
       </bendpoints>
    </relationship>
@@ -137,20 +172,6 @@
       <class="edu.buffalo.cse.green.relationship.composition.CompositionPart"/>
       <sourceType="=Gene_Expression_Programming/src<com.gep{Population.java[Population"/>
       <targetType="=Gene_Expression_Programming/src<com.gep{Individual.java[Individual"/>
-      <bendpoints>
-      </bendpoints>
-   </relationship>
-   <relationship>
-      <class="edu.buffalo.cse.green.relationship.dependency.DependencyLPart"/>
-      <sourceType="=Gene_Expression_Programming/src<com.gep{ConciseClassify.java[ConciseClassify"/>
-      <targetType="=Gene_Expression_Programming/src<com.gep{Expression.java[Expression"/>
-      <bendpoints>
-      </bendpoints>
-   </relationship>
-   <relationship>
-      <class="edu.buffalo.cse.green.relationship.composition.CompositionPart"/>
-      <sourceType="=Gene_Expression_Programming/src<com.gep{Expression.java[Expression"/>
-      <targetType="=Gene_Expression_Programming/src<com.gep{FunctionSet.java[FunctionSet"/>
       <bendpoints>
       </bendpoints>
    </relationship>
